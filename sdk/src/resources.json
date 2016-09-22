@@ -1,4 +1,4 @@
-﻿{
+{
     "TypeCheckError"                                        : "'{0}' is expected to be a value of type {1}, not {2}.",
     "Validate_NotNullError"                                 : "{0} cannot be null.",
     "Validate_NotNullOrEmptyError"                          : "{0} cannot be null or empty.",
