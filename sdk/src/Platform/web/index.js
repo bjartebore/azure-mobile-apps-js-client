@@ -46,7 +46,7 @@ exports.async = function async(func) {
     /// operation (i.e., keep using callbacks or switch to promises).
     /// </summary>
     /// <param name="func" type="Function">
-    /// An async function with a callback as its last parameter 
+    /// An async function with a callback as its last parameter
     /// </param>
     /// <returns type="Function">
     /// Function that when invoked will return a promise.
@@ -202,7 +202,7 @@ exports.tryParseIsoDateString = function (text) {
     var matchedDate = isoDateRegex.exec(text);
     if (matchedDate) {
         // IE9 only handles precisely 0 or 3 decimal places when parsing ISO dates,
-        // and IE8 doesn't parse them at all. Fortunately, all browsers can handle 
+        // and IE8 doesn't parse them at all. Fortunately, all browsers can handle
         // 'yyyy/mm/dd hh:MM:ss UTC' (without fractional seconds), so we can rewrite
         // the date to that format, and the apply fractional seconds.
         var dateWithoutFraction = matchedDate[1],

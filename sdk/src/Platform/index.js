@@ -4,9 +4,9 @@
 
 var target = require('./environment').getTarget();
 
-if (environment.getTarget() === 'Cordova') {
+if (target === 'Cordova') {
     module.exports = require('./cordova');
-} else if (environment.getTarget() === 'Web') {
+} else if (target === 'Web') {
     module.exports = require('./web');
 } else {
     throw new Error('Unsupported target');

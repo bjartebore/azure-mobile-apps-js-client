@@ -106,14 +106,14 @@ function MobileServiceClient(applicationUrl) {
 
         Validate.isString(tableName, 'tableName');
         Validate.notNullOrEmpty(tableName, 'tableName');
-		
+
         return new MobileServiceSyncTable(tableName, this);
     };
 
     if (Push) {
         this.push = new Push(this, MobileServiceClient._applicationInstallationId);
     }
-    
+
 }
 
 MobileServiceClient.prototype.withFilter = function (serviceFilter) {
@@ -254,6 +254,9 @@ MobileServiceClient.prototype._request = function (method, uriFragment, content,
     if (this.currentUser && !_.isNullOrEmpty(this.currentUser.mobileServiceAuthenticationToken)) {
         options.headers["X-ZUMO-AUTH"] = this.currentUser.mobileServiceAuthenticationToken;
     }
+    if (this.currentUser && !_.isNullOrEmpty(this.currentUser.bearerToken)) {
+      options.headers.Authorization = 'Bearer ' + this.currentUser.bearerToken;
+    }
     if (!_.isNull(MobileServiceClient._userAgent)) {
         options.headers["User-Agent"] = MobileServiceClient._userAgent;
     }
@@ -309,7 +312,7 @@ MobileServiceClient.prototype.loginWithOptions = Platform.async(
          /// given options.
          /// </summary>
          /// <param name="provider" type="String" mayBeNull="false">
-         /// Name of the authentication provider to use; one of 'facebook', 'twitter', 'google', 
+         /// Name of the authentication provider to use; one of 'facebook', 'twitter', 'google',
          /// 'windowsazureactivedirectory' (can also use 'aad')
          /// or 'microsoftaccount'.
          /// </param>
@@ -317,9 +320,9 @@ MobileServiceClient.prototype.loginWithOptions = Platform.async(
          /// Contains additional parameter information, valid values are:
          ///    token: provider specific object with existing OAuth token to log in with
          ///    useSingleSignOn: Only applies to Windows 8 clients.  Will be ignored on other platforms.
-         /// Indicates if single sign-on should be used. Single sign-on requires that the 
-         /// application's Package SID be registered with the Microsoft Azure Mobile Service, 
-         /// but it provides a better experience as HTTP cookies are supported so that users 
+         /// Indicates if single sign-on should be used. Single sign-on requires that the
+         /// application's Package SID be registered with the Microsoft Azure Mobile Service,
+         /// but it provides a better experience as HTTP cookies are supported so that users
          /// do not have to login in everytime the application is launched.
          ///    parameters: Any additional provider specific query string parameters.
          /// </param>
@@ -329,17 +332,31 @@ MobileServiceClient.prototype.loginWithOptions = Platform.async(
          this._login.loginWithOptions(provider, options, callback);
      });
 
+MobileServiceClient.prototype.overrideLoginWithBearerToken = Platform.async(
+    function(bearerToken, callback) {
+        /// <summary>
+        /// Override the login user with a valid bearer token
+        /// </summary>
+        /// <param name="bearerToken" type="string" mayBeNull="false">
+        /// provider specific object with existing OAuth token to log in with.
+        /// </param>
+        /// <param name="callback" type="Function" mayBeNull="true">
+        /// Optional callback accepting (error, user) parameters.
+        /// </param>
+        this._login.overrideLoginWithBearerToken(bearerToken, callback);
+    });
+
 MobileServiceClient.prototype.login = Platform.async(
     function (provider, token, useSingleSignOn, callback) {
         /// <summary>
-        /// Log a user into a Mobile Services application given a provider name and optional 
+        /// Log a user into a Mobile Services application given a provider name and optional
         /// authentication token.
         /// </summary>
         /// <param name="provider" type="String" mayBeNull="true">
-        /// Name of the authentication provider to use; one of 'facebook', 'twitter', 'google', 
+        /// Name of the authentication provider to use; one of 'facebook', 'twitter', 'google',
         /// 'windowsazureactivedirectory' (can also use 'aad')
         /// or 'microsoftaccount'. If no provider is specified, the 'token' parameter
-        /// is considered a Microsoft Account authentication token. If a provider is specified, 
+        /// is considered a Microsoft Account authentication token. If a provider is specified,
         /// the 'token' parameter is considered a provider-specific authentication token.
         /// </param>
         /// <param name="token" type="Object" mayBeNull="true">
@@ -347,9 +364,9 @@ MobileServiceClient.prototype.login = Platform.async(
         /// </param>
         /// <param name="useSingleSignOn" type="Boolean" mayBeNull="true">
         /// Only applies to Windows 8 clients.  Will be ignored on other platforms.
-        /// Indicates if single sign-on should be used. Single sign-on requires that the 
-        /// application's Package SID be registered with the Microsoft Azure Mobile Service, 
-        /// but it provides a better experience as HTTP cookies are supported so that users 
+        /// Indicates if single sign-on should be used. Single sign-on requires that the
+        /// application's Package SID be registered with the Microsoft Azure Mobile Service,
+        /// but it provides a better experience as HTTP cookies are supported so that users
         /// do not have to login in everytime the application is launched.
         /// </param>
         /// <param name="callback" type="Function" mayBeNull="true">
@@ -365,7 +382,7 @@ MobileServiceClient.prototype.logout = Platform.async(function(callback) {
     /// Optional callback accepting error as a parameter.
     /// </param>
     /// </summary>
-    
+
     this.currentUser = null;
     callback();
 });
@@ -382,7 +399,7 @@ MobileServiceClient.prototype.invokeApi = Platform.async(
         /// Contains additional parameter information, valid values are:
         /// body: The body of the HTTP request.
         /// method: The HTTP method to use in the request, with the default being POST,
-        /// parameters: Any additional query string parameters, 
+        /// parameters: Any additional query string parameters,
         /// headers: HTTP request headers, specified as an object.
         /// </param>
         /// <param name="callback" type="Function" mayBeNull="true">
